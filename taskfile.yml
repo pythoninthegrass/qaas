@@ -1,0 +1,51 @@
+version: "3.0"
+
+dotenv: ['.env']
+
+env:
+  TLD:
+    sh: "echo {{.TASKFILE_DIR}}"              # absolute path
+    # sh: "basename ${{.TASKFILE_DIR}}"       # directory name
+  COMPOSE_FILE: docker-compose.yml
+
+vars:
+
+tasks:
+  print:
+    - |
+      echo -e "TLD:\t\t$TLD"
+      echo -e "REGISTRY_URL:\t$REGISTRY_URL"
+      echo -e "USER_NAME:\t$USER_NAME"
+      echo -e "SERVICE:\t$SERVICE"
+
+  default:
+    desc: "Default task"
+    cmds:
+      - task --list
+
+  all:
+    desc: "Run all tasks"
+    deps:
+      - enable_registry
+      - build
+      - push
+
+  # TODO: add conditional to login differently based on registry
+  login:
+    desc: "Login to the registry"
+    run: once
+    cmds:
+      - echo "${GITHUB_TOKEN}" | docker login ghcr.io -u "${USER_NAME}" --password-stdin
+
+  build:
+    desc: "Build the docker image"
+    cmds:
+      - docker build -t "${REGISTRY_URL}/${USER_NAME}/${SERVICE}:latest" "{{.TLD}}"
+
+  push:
+    desc: "Push the docker image to the registry"
+    deps:
+      - build
+      - login
+    cmds:
+      - docker push "${REGISTRY_URL}/${USER_NAME}/${SERVICE}"
