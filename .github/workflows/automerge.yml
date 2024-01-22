@@ -22,16 +22,21 @@ on:
 
   status: {}
 
-env:
-  # required labels for pull request to be merged
-  MERGE_LABELS: "autorelease: pending"
+permissions:
+  contents: write
 
-  # count of required approvals
+env:
+  MERGE_LABELS: "autorelease: pending"
+  MERGE_REMOVE_LABELS: "automerge, autorelease: pending"
+  MERGE_METHOD: "squash"
   MERGE_REQUIRED_APPROVALS: 0
+  MERGE_RETRIES: "3"
+  MERGE_RETRY_SLEEP: "10000"
 
   # labels that need to be present for a pull request to be updated
   # * updating will only happen when the option "Require branches to be up to date before merging" is enabled in the branch protection rules
   UPDATE_LABELS: ""
+  UPDATE_METHOD: "rebase"
 
 jobs:
   automerge:
@@ -43,6 +48,7 @@ jobs:
         uses: "pascalgn/automerge-action@v0.15.6"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          LOG: "DEBUG"  # DEBUG, INFO, WARN, ERROR, TRACE
 
       - name: feedback
         if: ${{ steps.automerge.outputs.mergeResult == 'merged' }}
