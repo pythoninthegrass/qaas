@@ -8,15 +8,14 @@ from bs4 import BeautifulSoup
 from decouple import config
 from tinydb import TinyDB, Query
 from urllib.parse import urljoin
-from tinydb import TinyDB, Query
 
-#  env vars
+# env vars
 name = config("NAME", default="goodreads")
 url = config("URL", default="https://www.goodreads.com/quotes")
 ttl = config("TTL", default=300)
 
 # database
-db = TinyDB("db.json")
+db = TinyDB("../db.json")
 
 # cache the requests to sqlite, expire after n time
 if not ttl:
@@ -79,6 +78,7 @@ def strip_characters(data):
                 item[key] = value.strip()
             elif key == "author":
                 value = value.strip()
+                value = value.rstrip(",")
                 item[key] = value
 
     return data
@@ -99,9 +99,50 @@ def sanitize_data(data):
     return valid_data
 
 
+def check_db():
+    """Check db.json for data."""
+
+    Quote = Query()
+    quotes = db.count(Quote.author.exists())
+
+    if quotes:
+        return True
+    else:
+        return False
+
+
+def update_db():
+    """Update existing db.json with normalized data."""
+
+    # get authors
+    authors_set = set(entry['author'] for entry in db.all())
+    quotes_set = set(entry['quote'] for entry in db.all())
+
+    # normalize authors
+    for author in authors_set:
+        normalized_author = strip_characters([{"author": author}])[0]["author"]
+        normalized_author_list = sanitize_data([{"author": normalized_author}])
+        if normalized_author_list:
+            normalized_author = normalized_author_list[0]["author"]
+            db.update({"author": normalized_author}, Author.author == author)
+
+    # normalize quotes
+    for quote in quotes_set:
+        normalized_quote = strip_characters([{"quote": quote}])[0]["quote"]
+        normalized_quote_list = sanitize_data([{"quote": normalized_quote}])
+        if normalized_quote_list:
+            normalized_quote = normalized_quote_list[0]["quote"]
+            db.update({"quote": normalized_quote}, Quote.quote == quote)
+
+
 async def main():
     # ! drop the table (qa)
     # db.drop_tables()
+
+    # check if there is data in the db
+    if check_db():
+        update_db()
+        return
 
     # initialize cursor with the starting URL
     cursor = url
