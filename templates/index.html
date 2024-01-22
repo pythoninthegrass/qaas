@@ -6,13 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QaaS</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+  <link href="/static/styles.css" rel="stylesheet">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 
 <body class="bg-gray-200">
   <div class="container mx-auto">
     <h1 class="text-4xl text-center py-5">Welcome to QaaS</h1>
-    <p class="text-center">This is a boilerplate index page rendered by FastAPI and styled with Tailwind CSS.</p>
+    <p class="text-center">Quotes as a Service is happy to serve 🤙</p>
+    <br>
+    <div class="flex justify-center">
+      <button hx-get="/quotes/1" hx-trigger="click" hx-target="#quote-display"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Get a Quote</button>
+    </div>
+    <div id="quote-placeholder" class="text-center mt-4">
+      <!-- This is a placeholder for the quote -->
+    </div>
+    <div id="quote-display" class="text-center mt-4">
+      <!-- The quote will be inserted here -->
+    </div>
   </div>
+  <script>
+    document.body.addEventListener('htmx:afterSwap', function (event) {
+      var quotes = JSON.parse(event.detail.xhr.response).quotes;
+      var quote = quotes[0]; // Get the first quote object from the array
+      var quoteElement = document.getElementById('quote-display');
+      quoteElement.innerHTML = `<p id="quote-text" class="text-center text-2xl">${quote.quote}</p><p id="author-text" class="text-center text-xl">- ${quote.author}</p>`;
+    });
+  </script>
 </body>
 
 </html>

@@ -32,5 +32,4 @@ COPY . .
 
 EXPOSE 8000
 
-ENTRYPOINT [ "gunicorn" ]
-CMD ["-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000", "app:app", "--reload"]
+ENTRYPOINT [ "/app/startup.sh" ]
