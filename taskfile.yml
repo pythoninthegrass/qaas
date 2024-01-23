@@ -50,7 +50,7 @@ tasks:
         {{.NETWORK}}
 
   up:
-    desc: "Start the project with docker-compose"
+    desc: "Start the project with docker compose"
     cmds:
       - |
         docker compose -f {{.COMPOSE_FILE}} up -d \
@@ -62,30 +62,34 @@ tasks:
     cmds:
       - docker exec -it ${SERVICE}-app bash
 
+  # TODO: handle siqint ('exit status 130')
   logs:
     desc: "Show logs for running container services"
     cmds:
       - docker compose -f {{.COMPOSE_FILE}} logs -tf
 
   stop:
-    desc: "Stop the project with docker-compose"
+    desc: "Stop the project with docker compose"
     cmds:
       - docker compose -f {{.COMPOSE_FILE}} stop
 
   down:
-    desc: "Stop and remove containers, networks, images, and volumes with docker-compose"
+    desc: "Stop and remove containers and networks with docker compose"
     cmds:
-      - |
-        docker compose -f {{.COMPOSE_FILE}} down \
-        --volumes \
-        --rmi all
+      - docker compose -f {{.COMPOSE_FILE}} down
 
   build:
-    desc: "Build the docker image"
+    desc: "Build the docker images"
     cmds:
       - |
         docker buildx build \
+        -f Dockerfile \
         -t "${REGISTRY_URL}/${USER_NAME}/${SERVICE}:latest" \
+        --load \
+        "{{.TLD}}"
+        docker buildx build \
+        -f Dockerfile.postgres \
+        -t ${SERVICE}-db \
         --load \
         "{{.TLD}}"
 
@@ -94,8 +98,15 @@ tasks:
     cmds:
       - |
         docker buildx build \
+        -f Dockerfile \
         --no-cache \
         -t "${REGISTRY_URL}/${USER_NAME}/${SERVICE}:latest" \
+        --load \
+        "{{.TLD}}"
+        docker buildx build \
+        -f Dockerfile.postgres \
+        --no-cache \
+        -t ${SERVICE}-db \
         --load \
         "{{.TLD}}"
 

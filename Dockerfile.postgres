@@ -1,0 +1,26 @@
+# syntax=docker/dockerfile:1.6
+
+FROM postgres:16.1-alpine3.19
+
+RUN apk add --no-cache python3 py3-pip
+
+WORKDIR /usr/local/bin
+
+COPY requirements.txt .
+
+RUN python3 -m venv venv \
+    && . venv/bin/activate \
+    && pip install -r requirements.txt
+
+ENV PATH="/usr/local/bin/venv/bin:$PATH"
+
+COPY ./bin/sqlite_to_postgres.py sqlite_to_postgres
+
+ENV POSTGRES_DB=${POSTGRES_DB:-postgres}
+ENV POSTGRES_USER=${POSTGRES_USER:-postgres}
+ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+ENV POSTGRES_PORT=${POSTGRES_PORT:-5432}
+
+EXPOSE ${POSTGRES_PORT}
+
+CMD ["postgres"]

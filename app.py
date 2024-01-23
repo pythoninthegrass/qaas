@@ -6,10 +6,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
+from random import randint
+from sqlalchemy import bindparam, create_engine, text, Column, Integer, String
+from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from typing import Optional
 
+# postgres schema
+Base = declarative_base()
+
+class Quote(Base):
+    __tablename__ = 'quotes'
+
+    id = Column(Integer, primary_key=True)
+    quote = Column(String, nullable=False)
+    author = Column(String, nullable=False)
+
+# postgres connection
 db_name = config("POSTGRES_DB")
 db_host = config("POSTGRES_HOST")
 db_user = config("POSTGRES_USER")
@@ -22,6 +34,7 @@ uri = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
 conn = create_engine(uri, echo=False)
 sesh = sessionmaker(bind=conn)
 
+# fastapi instantiation
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -35,17 +48,20 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get('/healthz')
 def healthz() -> JSONResponse:
+    """Health check endpoint"""
     return JSONResponse(content={"status": "ok"})
 
 
 @app.get('/', response_class=HTMLResponse)
 def home(request: Request):
+    """Home page"""
     return templates.TemplateResponse("index.html", {"request": request})
 
 
 # TODO: fix optional name parameter
 @app.get('/hello/{name}')
 def hello(name: Optional[str] = None) -> JSONResponse:
+    """Hello, World!"""
     if name:
         message = f"Hello, {name}!"
     else:
@@ -56,18 +72,22 @@ def hello(name: Optional[str] = None) -> JSONResponse:
 # TODO: improve sql performance
 @app.get('/all')
 def get_quotes(request: Request) -> JSONResponse:
-    session = sesh()
-    quotes = session.execute("SELECT * FROM quotes").fetchall()
-    session.close()
-    return JSONResponse(content={"quotes": quotes})
+    """Get all quotes"""
+    with Session(conn) as session:
+        quotes = session.query(Quote).all()
+        result = [{"id": quote.id, "quote": quote.quote, "author": quote.author} for quote in quotes]
+    return JSONResponse(content={"quotes": result})
 
 
 @app.get('/quotes/{limit}')
 def get_quotes_by_limit(request: Request, limit: int) -> JSONResponse:
-    session = sesh()
-    quotes = session.execute(text(f"SELECT * FROM quotes ORDER BY RANDOM() LIMIT {limit}")).fetchall()
-    session.close()
-    quotes = [{"id": id,
-               "quote": quote,
-               "author": author} for id, quote, author in quotes]
-    return JSONResponse(content={"quotes": quotes})
+    """Get quotes by limit"""
+    with Session(conn) as session:
+        count = session.query(Quote).count()
+        if count > 0:
+            random_index = randint(0, count - 1)
+            quote = session.query(Quote).offset(random_index).limit(limit).first()
+            result = [{"id": quote.id, "quote": quote.quote, "author": quote.author}]
+        else:
+            result = []
+    return JSONResponse(content={"quotes": result})

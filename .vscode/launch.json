@@ -24,6 +24,21 @@
             // "args": ["-h"],
         },
         {
+            "name": "Python: FastAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "gunicorn",
+            "args": [
+                "-k",
+                "uvicorn.workers.UvicornWorker",
+                "-b",
+                "0.0.0.0:${env:PORT}",
+                "--reload",
+                "app:app"
+            ],
+            "justMyCode": true
+        },
+        {
             "name": "Python: Django",
             "type": "python",
             "request": "launch",
