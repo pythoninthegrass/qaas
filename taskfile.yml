@@ -1,5 +1,8 @@
 version: "3.0"
 
+set: ['e', 'u', 'pipefail']
+shopt: ['globstar']
+
 dotenv: ['.env']
 
 env:
@@ -7,6 +10,7 @@ env:
     sh: "echo {{.TASKFILE_DIR}}"              # absolute path
     # sh: "basename ${{.TASKFILE_DIR}}"       # directory name
   COMPOSE_FILE: docker-compose.yml
+  NETWORK: app-tier
 
 vars:
 
@@ -37,10 +41,63 @@ tasks:
     cmds:
       - echo "${GITHUB_TOKEN}" | docker login ghcr.io -u "${USER_NAME}" --password-stdin
 
+  net:
+    desc: "Create docker network"
+    cmds:
+      - |
+        docker network create \
+        --driver bridge \
+        {{.NETWORK}}
+
+  up:
+    desc: "Start the project with docker-compose"
+    cmds:
+      - |
+        docker compose -f {{.COMPOSE_FILE}} up -d \
+        --build \
+        --remove-orphans
+
+  exec:
+    desc: "Interactive shell for running container"
+    cmds:
+      - docker exec -it ${SERVICE}-app bash
+
+  logs:
+    desc: "Show logs for running container services"
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} logs -tf
+
+  stop:
+    desc: "Stop the project with docker-compose"
+    cmds:
+      - docker compose -f {{.COMPOSE_FILE}} stop
+
+  down:
+    desc: "Stop and remove containers, networks, images, and volumes with docker-compose"
+    cmds:
+      - |
+        docker compose -f {{.COMPOSE_FILE}} down \
+        --volumes \
+        --rmi all
+
   build:
     desc: "Build the docker image"
     cmds:
-      - docker build -t "${REGISTRY_URL}/${USER_NAME}/${SERVICE}:latest" "{{.TLD}}"
+      - |
+        docker buildx build \
+        -t "${REGISTRY_URL}/${USER_NAME}/${SERVICE}:latest" \
+        --load \
+        "{{.TLD}}"
+
+  build-clean:
+    desc: "Build the docker image without cache"
+    cmds:
+      - |
+        docker buildx build \
+        --no-cache \
+        -t "${REGISTRY_URL}/${USER_NAME}/${SERVICE}:latest" \
+        --load \
+        "{{.TLD}}"
 
   push:
     desc: "Push the docker image to the registry"
@@ -49,3 +106,9 @@ tasks:
       - login
     cmds:
       - docker push "${REGISTRY_URL}/${USER_NAME}/${SERVICE}"
+
+  prune:
+    desc: "Prune docker"
+    cmds:
+      - docker system prune --all --force
+      - docker buildx builder prune --all --force
