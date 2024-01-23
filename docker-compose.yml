@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    container_name: ${SERVICE}
+    container_name: ${SERVICE}-app
     image: ${REGISTRY_URL}/${USER_NAME}/${SERVICE}
     build:
       context: .
@@ -14,3 +14,31 @@ services:
       - ${PORT:-8000}:8000
     volumes:
       - .:/app
+    healthcheck:
+      test: ["CMD-SHELL", "curl /healthz"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      - db
+
+  db:
+    container_name: ${SERVICE}-db
+    image: postgres:16.1-alpine3.19
+    platform: linux/x86_64
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres_data:
