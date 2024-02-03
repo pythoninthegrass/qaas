@@ -16,7 +16,7 @@ python-decouple = "^3.8"
 requests = "^2.31.0"
 requests-cache = "^1.1.1"
 tinydb = "^4.8.0"
-uvicorn = "^0.26.0"
+uvicorn = "^0.27.0"
 psycopg2-binary = "^2.9.9"
 sqlalchemy = "^2.0.25"
 
