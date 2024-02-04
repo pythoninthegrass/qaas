@@ -1,0 +1,76 @@
+services:
+  - type: web
+    name: qaas
+    runtime: docker
+    repo: https://github.com/pythoninthegrass/qaas.git      # optional
+    branch: main
+    autoDeploy: false                                       # optional
+    domains:
+      - qaas.sh
+    plan: free                                              # free/starter/standard
+    region: ohio                                            # oregon, ohio, frankfurt, or singapore
+    # disk:                                                 # starter/standard only
+    #   name: web-data
+    #   mountPath: /app
+    #   sizeGB: 5
+    registryCredential:                                     # https://dashboard.render.com/u/settings#registry-credentials
+      fromRegistryCreds:
+        name: GITHUB_TOKEN
+    rootDir:
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    # dockerCommand:                                        # default: Dockerfile (./startup.sh)
+    healthCheckPath: /healthz
+    # scaling:                                              # starter/standard only
+    #   minInstances: 1
+    #   maxInstances: 1
+    #   targetMemoryPercent: 60                             # optional if targetCPUPercent is set
+    #   targetCPUPercent: 60                                # optional if targetMemory is set
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: postgres
+          property: connectionString
+
+databases:
+  - name: postgres
+    databaseName: quotes                                    # optional (Render may add a suffix)
+    user: postgres                                          # optional
+    ipAllowList:                                            # default: allow all (empyty list `[]` is internal only)
+      - source: 172.127.40.244/24
+        description: home
+    # readReplicas:                                         # optional (defaults to no replicas)
+    #   - name: pg-replica
+    envVars:
+      - key: POSTGRES_DB
+        value: quotes
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        sync: false
+
+# - type: redis
+  #   name: lightning
+  #   ipAllowList:                                          # required
+  #     - source: 0.0.0.0/0
+  #       description: everywhere
+  #   plan: free                                            # free/starter/standard
+  #   maxmemoryPolicy: noeviction                           # allkeys-lru/volatile-lru/noeviction
+
+  # # A Python cron job that runs every hour
+  # - type: cron
+  #   name: date
+  #   runtime: python
+  #   schedule: "0 * * * *"
+  #   buildCommand: "true" # ensure it's a string
+  #   startCommand: date
+  #   repo: https://github.com/render-examples/docker.git # optional
+  # # A background worker that consumes a queue
+  # - type: worker
+  #   name: queue
+  #   runtime: docker
+  #   dockerfilePath: ./sub/Dockerfile # optional
+  #   dockerContext: ./sub/src # optional
+  #   branch: queue # optional

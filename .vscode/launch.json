@@ -32,7 +32,8 @@
                 "-k",
                 "uvicorn.workers.UvicornWorker",
                 "-b",
-                "0.0.0.0:${env:PORT}",
+                // TODO: fallback to 8000 in host box
+                "0.0.0.0:8000",
                 "--reload",
                 "app:app"
             ],
