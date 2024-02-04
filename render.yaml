@@ -7,12 +7,12 @@ services:
     autoDeploy: false                                       # optional
     domains:
       - qaas.sh
-    plan: free                                              # free/starter/standard
+    plan: starter                                           # free/starter/standard
     region: ohio                                            # oregon, ohio, frankfurt, or singapore
-    # disk:                                                 # starter/standard only
-    #   name: web-data
-    #   mountPath: /app
-    #   sizeGB: 5
+    disk:                                                   # starter/standard only
+      name: web-data
+      mountPath: /app
+      sizeGB: 5
     registryCredential:                                     # https://dashboard.render.com/u/settings#registry-credentials
       fromRegistryCreds:
         name: GITHUB_TOKEN
@@ -45,7 +45,7 @@ envVarGroups:
       sync: false
     - key: POSTGRES_URI
       fromDatabase:
-        name: postgres
+        name: qaas-postgres
         property: connectionString
     - key: POSTGRES_HOST
       sync: false
