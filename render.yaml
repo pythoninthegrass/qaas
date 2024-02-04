@@ -44,25 +44,6 @@ databases:
     ipAllowList:                                            # default: allow all (empyty list `[]` is internal only)
       - source: 172.127.40.244/24
         description: home
-    envVars:
-      - key: POSTGRES_DB
-        fromGroup: qaas-settings
-      - key: POSTGRES_URI
-        fromGroup: qaas-settings
-      - key: POSTGRES_HOST
-        fromGroup: qaas-settings
-      - key: POSTGRES_PASSWORD
-        fromGroup: qaas-settings
-      - key: POSTGRES_PORT
-        fromGroup: qaas-settings
-      - key: POSTGRES_USER
-        fromGroup: qaas-settings
-      - key: REGISTRY_URL
-        value: ghcr.io
-      - key: SERVICE
-        fromGroup: qaas-settings
-      - key: USER_NAME
-        fromGroup: qaas-settings
 
 envVarGroups:
 - name: qaas-settings
