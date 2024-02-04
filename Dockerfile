@@ -2,7 +2,7 @@
 
 FROM python:3.11-slim-buster
 
-ENV TZ=America/Chicago
+ENV TZ=UTC
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
