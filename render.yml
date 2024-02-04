@@ -16,17 +16,12 @@ services:
     registryCredential:                                     # https://dashboard.render.com/u/settings#registry-credentials
       fromRegistryCreds:
         name: GITHUB_TOKEN
-    rootDir:
+    rootDir:                                                # default: top-level directory
     dockerContext: .
     dockerfilePath: Dockerfile
     healthCheckPath: /healthz
     envVars:
-      - key: PORT
-        value: 8000
-      - key: POSTGRES_DB
-        fromDatabase:
-          name: postgres
-          property: connectionString
+      - fromGroup: qaas-settings
 
 databases:
   - name: qaas-postgres
@@ -39,13 +34,14 @@ databases:
       - source: 172.127.40.244/24
         description: home
     envVars:
-      - key: POSTGRES_URI
-        fromDatabase:
-          name: qaas-postgres
-          property: connectionString
-      - key: POSTGRES_DB
-        sync: false
-      - key: POSTGRES_USER
-        sync: false
-      - key: POSTGRES_PASSWORD
-        sync: false
+      - fromGroup: qaas-settings
+
+envVarGroups:
+- name: qaas-settings
+  envVars:
+    - key: PORT
+      value: 8000
+    - key: POSTGRES_DB
+      fromDatabase:
+        name: postgres
+        property: connectionString
