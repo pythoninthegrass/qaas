@@ -21,28 +21,17 @@ services:
     dockerfilePath: Dockerfile
     healthCheckPath: /healthz
     envVars:
-      - key: PORT
-        fromGroup: qaas-settings
-      - key: POSTGRES_DB
-        fromGroup: qaas-settings
-      - key: POSTGRES_URI
-        fromGroup: qaas-settings
-      - key: POSTGRES_HOST
-        fromGroup: qaas-settings
-      - key: POSTGRES_PASSWORD
-        fromGroup: qaas-settings
-      - key: POSTGRES_PORT
-        fromGroup: qaas-settings
+      - fromGroup: qaas-settings
 
 databases:
   - name: qaas-postgres
     databaseName: quotes                                    # optional (Render may add a suffix)
-    user: postgres                                          # optional
+    user: sa                                                # optional
     region: ohio                                            # oregon, ohio, frankfurt, or singapore
     postgresMajorVersion: 15                                # 12/13/14/15
     plan: free                                              # free/starter/standard
     ipAllowList:                                            # default: allow all (empyty list `[]` is internal only)
-      - source: 172.127.40.244/24
+      - source: 172.16.0.0/24
         description: home
 
 envVarGroups:
