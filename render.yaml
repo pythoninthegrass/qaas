@@ -21,7 +21,18 @@ services:
     dockerfilePath: Dockerfile
     healthCheckPath: /healthz
     envVars:
-      - fromGroup: qaas-settings
+      - key: PORT
+        fromGroup: qaas-settings
+      - key: POSTGRES_DB
+        fromGroup: qaas-settings
+      - key: POSTGRES_URI
+        fromGroup: qaas-settings
+      - key: POSTGRES_HOST
+        fromGroup: qaas-settings
+      - key: POSTGRES_PASSWORD
+        fromGroup: qaas-settings
+      - key: POSTGRES_PORT
+        fromGroup: qaas-settings
 
 databases:
   - name: qaas-postgres
@@ -34,7 +45,24 @@ databases:
       - source: 172.127.40.244/24
         description: home
     envVars:
-      - fromGroup: qaas-settings
+      - key: POSTGRES_DB
+        fromGroup: qaas-settings
+      - key: POSTGRES_URI
+        fromGroup: qaas-settings
+      - key: POSTGRES_HOST
+        fromGroup: qaas-settings
+      - key: POSTGRES_PASSWORD
+        fromGroup: qaas-settings
+      - key: POSTGRES_PORT
+        fromGroup: qaas-settings
+      - key: POSTGRES_USER
+        fromGroup: qaas-settings
+      - key: REGISTRY_URL
+        value: ghcr.io
+      - key: SERVICE
+        fromGroup: qaas-settings
+      - key: USER_NAME
+        fromGroup: qaas-settings
 
 envVarGroups:
 - name: qaas-settings
