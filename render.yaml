@@ -22,10 +22,6 @@ services:
     healthCheckPath: /healthz
     envVars:
       - fromGroup: qaas-settings
-      - key: POSTGRES_URI
-        fromDatabase:
-          name: qaas-postgres
-          property: connectionString
 
 databases:
   - name: qaas-postgres
@@ -46,6 +42,22 @@ envVarGroups:
     - key: PORT
       value: 8000
     - key: POSTGRES_DB
+      sync: false
+    - key: POSTGRES_URI
       fromDatabase:
         name: postgres
         property: connectionString
+    - key: POSTGRES_HOST
+      sync: false
+    - key: POSTGRES_PASSWORD
+      sync: false
+    - key: POSTGRES_PORT
+      sync: false
+    - key: POSTGRES_USER
+      sync: false
+    - key: REGISTRY_URL
+      value: ghcr.io
+    - key: SERVICE
+      sync: false
+    - key: USER_NAME
+      sync: false
