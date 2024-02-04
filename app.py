@@ -22,6 +22,7 @@ class Quote(Base):
     author = Column(String, nullable=False)
 
 # postgres connection
+db_uri = config("POSTGRES_URI")
 db_name = config("POSTGRES_DB")
 db_host = config("POSTGRES_HOST")
 db_user = config("POSTGRES_USER")
@@ -30,7 +31,10 @@ db_port = config("POSTGRES_PORT",
                   default=5432,
                   cast=int)
 
-uri = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+if db_uri:
+    uri = db_uri
+else:
+    uri = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
 conn = create_engine(uri, echo=False)
 sesh = sessionmaker(bind=conn)
 
