@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC2034,SC2046
+# shellcheck disable=SC1091,SC2034,SC2317,SC2046
 
 set -euo pipefail
 
@@ -21,6 +21,20 @@ if [[ -n "$GIT_ROOT" ]]; then
 else
 	TLD="${SCRIPT_DIR}"
 fi
+
+# activate virtual environment
+if [[ -d "${TLD}/.venv" ]]; then
+	source "${TLD}/.venv/bin/activate"
+fi
+
+trap_card() {
+	# deactivate .venv and code as exit 0
+	if [[ -d "${TLD}/.venv" ]]; then
+		deactivate 2>/dev/null || true
+	fi
+}
+# trap exit signals: 0, 1, 2, 15
+trap trap_card EXIT SIGHUP SIGINT SIGTERM
 
 # get ip address
 if [[ $(uname -s) = "Darwin" ]]; then
@@ -51,3 +65,5 @@ gunicorn \
 	--reload-extra-file="${TLD}/templates/index.html" \
 	--reload-extra-file="${TLD}/static/styles.css" \
 	app:app
+
+exit 0
