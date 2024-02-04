@@ -25,10 +25,7 @@ services:
 
   db:
     container_name: ${SERVICE}-db
-    image: postgres:16.1-alpine3.19
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile.postgres
+    image: postgres:15.5-alpine3.19
     platform: linux/x86_64
     env_file:
       - .env
