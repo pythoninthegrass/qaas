@@ -4,7 +4,8 @@ services:
     runtime: docker
     repo: https://github.com/pythoninthegrass/qaas.git      # optional
     branch: main
-    autoDeploy: false                                       # optional
+    pullRequestPreviewsEnabled: true                        # optional
+    autoDeploy: true                                        # optional
     domains:
       - qaas.sh
     plan: starter                                           # free/starter/standard
