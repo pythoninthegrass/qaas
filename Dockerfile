@@ -40,6 +40,6 @@ ENV WEB_CONCURRENCY=2
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE ${PORT:-8000}
 
 ENTRYPOINT [ "/app/startup.sh" ]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from decouple import config
+from decouple import config, UndefinedValueError
 from fastapi import FastAPI, Query, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -22,15 +22,18 @@ class Quote(Base):
     author = Column(String, nullable=False)
 
 # postgres connection
-# db_name = config("POSTGRES_DB")
-# db_host = config("POSTGRES_HOST")
-# db_user = config("POSTGRES_USER")
-# db_pass = config("POSTGRES_PASSWORD")
-# db_port = config("POSTGRES_PORT",
-#                   default=5432,
-#                   cast=int)
-# uri = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
-db_uri = config("POSTGRES_URI")
+try:
+    db_uri = config("POSTGRES_URI")
+except UndefinedValueError:
+    db_name = config("POSTGRES_DB")
+    db_host = config("POSTGRES_HOST")
+    db_user = config("POSTGRES_USER")
+    db_pass = config("POSTGRES_PASSWORD")
+    db_port = config("POSTGRES_PORT",
+                    default=5432,
+                    cast=int)
+    db_uri = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+
 uri = db_uri
 conn = create_engine(uri, echo=False)
 sesh = sessionmaker(bind=conn)
