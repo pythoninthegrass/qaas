@@ -17,10 +17,11 @@ services:
     registryCredential:                                     # https://dashboard.render.com/u/settings#registry-credentials
       fromRegistryCreds:
         name: GITHUB_TOKEN
-    rootDir:                                                # default: top-level directory
+    # rootDir: .                                            # default: top-level directory
     dockerContext: .
     dockerfilePath: Dockerfile
-    healthCheckPath: /healthz
+    # dockerCommand: sleep infinity
+    # healthCheckPath: /healthz
     envVars:
       - fromGroup: qaas-settings
       - key: PORT
