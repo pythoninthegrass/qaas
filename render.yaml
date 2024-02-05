@@ -38,7 +38,7 @@ databases:
     postgresMajorVersion: 15                                # 12/13/14/15
     plan: free                                              # free/starter/standard
     ipAllowList:                                            # default: allow all (empyty list `[]` is internal only)
-      - source: 172.16.0.0/24
+      - source: 172.127.40.244/32
         description: home
 
 envVarGroups:
