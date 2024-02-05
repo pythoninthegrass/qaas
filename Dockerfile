@@ -14,10 +14,6 @@ RUN apt-get update \
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-WORKDIR /app
-
-COPY requirements.txt .
-
 ENV DATABASE_NAME=${POSTGRES_DB:-postgres}
 ENV DATABASE_URL=${POSTGRES_HOST:-db}
 ENV DATABASE_USER=${POSTGRES_USER:-postgres}
@@ -31,6 +27,10 @@ ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=on
 ENV PIP_DEFAULT_TIMEOUT=100
 
+WORKDIR /app
+
+COPY requirements.txt .
+
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
 ENV LANG C.UTF-8
@@ -38,7 +38,14 @@ ENV LC_ALL C.UTF-8
 
 ENV WEB_CONCURRENCY=2
 
+ARG USER_NAME=nonroot
+
+RUN addgroup --system $USER_NAME \
+    && adduser --system --ingroup $USER_NAME $USER_NAME
+
 COPY . .
+
+USER $USER_NAME
 
 EXPOSE ${PORT:-8000}
 
