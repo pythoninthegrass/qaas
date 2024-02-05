@@ -2,10 +2,15 @@
 
 import json
 import sqlite3
+import sys
 from pathlib import Path
 
-raw_db = Path("../db.json")
-db = Path("../db.sqlite")
+if len(sys.argv) > 1 and sys.argv[1]:
+    raw_db = Path(sys.argv[1]).resolve()
+    db = raw_db.parent / "db.sqlite"
+else:
+    raw_db = Path("../db.json")
+    db = Path("../db.sqlite")
 
 # ! remove the db if it exists (qa)
 if db.exists():

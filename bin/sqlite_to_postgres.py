@@ -2,6 +2,7 @@
 
 import platform
 import sqlite3
+import sys
 from decouple import config
 from pathlib import Path
 from sqlalchemy import create_engine, Column, Integer, String
@@ -11,7 +12,12 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 tld = Path(__file__).resolve().parent.parent
 
 # sqlite data
-sqlite_db = Path(f"{tld}/db.sqlite").resolve()
+if len(sys.argv) > 1 and sys.argv[1]:
+    sqlite_db = Path(sys.argv[1]).resolve()
+else:
+    sqlite_db = Path(f"{tld}/db.sqlite").resolve()
+
+# read sqlite data
 with sqlite3.connect(sqlite_db) as sqlite_conn:
     sqlite_cursor = sqlite_conn.cursor()
     sqlite_cursor.execute("SELECT * FROM quotes")
@@ -30,7 +36,7 @@ class Quote(Base):
 
 
 # postgres connection
-db_name = config("POSTGRES_DB", default="postgres")
+db_name = config("POSTGRES_DB", default="quotes")
 db_host = config("POSTGRES_HOST", default="localhost")
 db_user = config("POSTGRES_USER")
 db_pass = config("POSTGRES_PASSWORD")
