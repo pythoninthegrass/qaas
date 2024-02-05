@@ -1,8 +1,10 @@
 # syntax=docker/dockerfile:1.6
 
-FROM postgres:16.1-alpine3.19
+FROM postgres:15.5-alpine3.19
 
-RUN apk add --no-cache python3 py3-pip
+ENV TZ=UTC
+
+RUN apk add --no-cache python3 py3-pip tzdata
 
 WORKDIR /usr/local/bin
 
@@ -14,13 +16,34 @@ RUN python3 -m venv venv \
 
 ENV PATH="/usr/local/bin/venv/bin:$PATH"
 
-COPY ./bin/sqlite_to_postgres.py sqlite_to_postgres
-
 ENV POSTGRES_DB=${POSTGRES_DB:-postgres}
 ENV POSTGRES_USER=${POSTGRES_USER:-postgres}
 ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 ENV POSTGRES_PORT=${POSTGRES_PORT:-5432}
 
+ARG USER_NAME=nonroot
+
+RUN addgroup --system $USER_NAME \
+    && adduser --system --ingroup $USER_NAME $USER_NAME \
+    && mkdir -p /var/run/postgresql \
+    && mkdir -p /var/lib/postgresql/data \
+    && mkdir -p /var/log/postgres \
+    && chown -R $USER_NAME:$USER_NAME /var/run/postgresql \
+    && chown -R $USER_NAME:$USER_NAME /var/lib/postgresql/data \
+    && chown -R $USER_NAME:$USER_NAME /var/log/postgres
+
+COPY --chown=${USER_NAME} ./bin/json_to_postgres.py json_to_postgres
+# TODO: minimmal postgresql.conf blocks connection outside loopback
+# COPY --chown=${USER_NAME} config/postgresql.conf /etc/postgresql/postgresql.conf
+
+WORKDIR /data
+
+COPY --chown=${USER_NAME} db.json .
+
+USER $USER_NAME
+
 EXPOSE ${POSTGRES_PORT}
 
+# TODO: `database "sa" does not exist
 CMD ["postgres"]
+# CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
