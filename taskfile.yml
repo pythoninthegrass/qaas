@@ -79,41 +79,34 @@ tasks:
       - docker compose -f {{.COMPOSE_FILE}} down
 
   build:
-    desc: "Build the docker images"
+    desc: "Build the docker image for the app"
     cmds:
       - |
-        docker buildx build \
-        -f Dockerfile \
-        -t "${REGISTRY_URL}/${USER_NAME}/${SERVICE}:latest" \
-        --load \
-        "{{.TLD}}"
-        docker buildx build \
-        -f Dockerfile.postgres \
-        -t ${SERVICE}-db \
-        --load \
-        "{{.TLD}}"
-
-  build-clean:
-    desc: "Build the docker image without cache"
-    cmds:
-      - |
-        docker buildx build \
-        -f Dockerfile \
-        --no-cache \
-        -t "${REGISTRY_URL}/${USER_NAME}/${SERVICE}:latest" \
-        --load \
-        "{{.TLD}}"
-        docker buildx build \
-        -f Dockerfile.postgres \
-        --no-cache \
-        -t ${SERVICE}-db \
-        --load \
-        "{{.TLD}}"
+        case {{.CLI_ARGS}} in
+          app)
+            docker buildx build \
+            -f Dockerfile \
+            -t "${REGISTRY_URL}/${USER_NAME}/${SERVICE}:latest" \
+            --load \
+            "{{.TLD}}"
+            ;;
+          db)
+            docker buildx build \
+            -f Dockerfile.postgres \
+            -t "${REGISTRY_URL}/${USER_NAME}/${SERVICE}-db:latest" \
+            --load \
+            "{{.TLD}}"
+            ;;
+          *)
+            echo "Invalid argument: {{.CLI_ARGS}}"
+            echo "Usage: task build -- <app|db>"
+            ;;
+        esac
 
   push:
-    desc: "Push the docker image to the registry"
+    desc: "Push the docker app image to the registry"
     deps:
-      - build
+      - build -- app
       - login
     cmds:
       - docker push "${REGISTRY_URL}/${USER_NAME}/${SERVICE}"
