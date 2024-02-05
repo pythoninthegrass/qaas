@@ -46,8 +46,6 @@ fi
 # set the environment file
 if [[ $(uname -s) = "Darwin" ]] || [[ "$PRIVATE_IP" =~ 192.168 ]]; then
 	ENV_FILE="${TLD}/.env"
-else
-	ENV_FILE="/etc/secrets/.env"
 fi
 
 # set the environment variables
