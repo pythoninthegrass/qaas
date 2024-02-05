@@ -106,7 +106,7 @@ tasks:
   push:
     desc: "Push the docker app image to the registry"
     deps:
-      - build -- app
+      - build
       - login
     cmds:
       - docker push "${REGISTRY_URL}/${USER_NAME}/${SERVICE}"
