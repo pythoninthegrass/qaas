@@ -2,7 +2,7 @@
 
 # shellcheck disable=SC1091,SC2034,SC2317,SC2046
 
-set -euo pipefail
+# set -euo pipefail
 
 # $USER
 [[ -n $(logname >/dev/null 2>&1) ]] && logged_in_user=$(logname) || logged_in_user=$(whoami)
