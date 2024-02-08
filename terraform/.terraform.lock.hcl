@@ -1,0 +1,25 @@
+# This file is maintained automatically by "terraform init".
+# Manual edits may be lost in future updates.
+
+provider "registry.terraform.io/jackall3n/render" {
+  version     = "1.3.0"
+  constraints = "1.3.0"
+  hashes = [
+    "h1:ytW0MuZmrRZeCGVcnf4F25/tldaWQs/6BCA3+GYqCgI=",
+    "zh:090ad0e78f9800be2537faaee95c46931677193a51b040b0ea885038f6a575fe",
+    "zh:2c3fb7a6244347276f07ad9060ee7a2474f1e3481927670e7407d234f4417f39",
+    "zh:3d2d0edbdd8a4e869f77a6f8611af37ebba7ba02398a8a44a5725358a041341a",
+    "zh:51e4a503727f633977762b2cdfb113813d95df8dfa013c372e8a3cf9cfd7fb98",
+    "zh:5a4714412bae55d7e82bd4c2220c3ab418b70ac80aaccd7f8ec4489738af86f5",
+    "zh:6f08ae3fb927e6c65d0bae9f14fd42f2d4b0e0d14e593f996d51c888f5905c2b",
+    "zh:74098721be016d78e8706e8fb774622344ca42a1b71d799e75e2797c7959e0b9",
+    "zh:9d1917828d8da658764235dbfdca199723dd4e2121bf1c11af9bfaaeedb730c2",
+    "zh:a48f2f85008fe9b77247cb7321e53871eac8a79edfa5a72c4b7c002374eb4e87",
+    "zh:a82cad577ca892cc79b7bb31791c506e81d43c4496543e0d8f4b99dda8fd4858",
+    "zh:b3187389a7f1e562a36c69ddcfbc1320464037652711c163507f0ff601812edf",
+    "zh:d4a3ea35544b1b7f2b9fd6085aa840c473441a07efa92e0c7579279e1cf34c43",
+    "zh:f569b65999264a9416862bca5cd2a6177d94ccb0424f3a4ef424428912b9cb3c",
+    "zh:f8385147c779bc5547ba5963e45d48c46f66158299dd4cdf87096f9b0ae9405f",
+    "zh:f9749a7006bf80028f95aeb038055fb1848b9242c8690b5397930fe74a2b7cc9",
+  ]
+}
