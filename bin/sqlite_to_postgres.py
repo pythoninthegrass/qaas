@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
-import platform
 import sqlite3
 import sys
-from decouple import config
+from decouple import config, UndefinedValueError
 from pathlib import Path
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -36,19 +35,20 @@ class Quote(Base):
 
 
 # postgres connection
-db_name = config("POSTGRES_DB", default="quotes")
-db_host = config("POSTGRES_HOST", default="localhost")
-db_user = config("POSTGRES_USER")
-db_pass = config("POSTGRES_PASSWORD")
-db_port = config("POSTGRES_PORT",
-                  default=5432,
-                  cast=int)
+try:
+    db_uri = config("DATABASE_URL")
+except UndefinedValueError:
+    db_name = config("POSTGRES_DB")
+    db_host = config("POSTGRES_HOST")
+    db_user = config("POSTGRES_USER")
+    db_pass = config("POSTGRES_PASSWORD")
+    db_port = config("POSTGRES_PORT",
+                    default=5432,
+                    cast=int)
+    db_uri = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
 
-# override db_host on darwin
-if platform.system() == "Darwin":
-    db_host = "localhost"
+uri = db_uri
 
-uri = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
 engine = create_engine(uri, echo=False)
 
 # create quotes table

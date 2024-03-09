@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
 import json
-import platform
 import psycopg2
 import sys
-from decouple import config
+from decouple import config, UndefinedValueError
 from pathlib import Path
 from psycopg2 import sql
 
@@ -22,20 +21,19 @@ quotes = [(key, value['quote'],
            value['author']) for key, value in data['_default'].items()]
 
 # postgres connection
-db_name = config("POSTGRES_DB", default="quotes")
-db_host = config("POSTGRES_HOST", default="localhost")
-db_user = config("POSTGRES_USER")
-db_pass = config("POSTGRES_PASSWORD")
-db_port = config("POSTGRES_PORT",
-                  default=5432,
-                  cast=int)
+try:
+    db_uri = config("DATABASE_URL")
+except UndefinedValueError:
+    db_name = config("POSTGRES_DB")
+    db_host = config("POSTGRES_HOST")
+    db_user = config("POSTGRES_USER")
+    db_pass = config("POSTGRES_PASSWORD")
+    db_port = config("POSTGRES_PORT",
+                    default=5432,
+                    cast=int)
+    db_uri = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
 
-# override db_host on darwin
-if platform.system() == "Darwin":
-    db_host = "localhost"
-
-# create uri
-uri = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+uri = db_uri
 
 # connect to your postgres db
 conn = psycopg2.connect(uri)
