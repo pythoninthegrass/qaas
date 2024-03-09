@@ -5,9 +5,10 @@ description = ""
 authors = ["pythoninthegrass <4097471+pythoninthegrass@users.noreply.github.com>"]
 readme = "README.md"
 license = "Unlicense"
+package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.13"
 bs4 = "^0.0.2"
 fastapi = "^0.109.0"
 gunicorn = "^21.2.0"
@@ -19,6 +20,7 @@ tinydb = "^4.8.0"
 uvicorn = "^0.26.0"
 psycopg2-binary = "^2.9.9"
 sqlalchemy = "^2.0.25"
+pocketbase-async = "^0.8.3"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.3.2"
