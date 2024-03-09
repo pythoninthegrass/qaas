@@ -23,7 +23,7 @@ class Quote(Base):
 
 # postgres connection
 try:
-    db_uri = config("POSTGRES_URI")
+    db_uri = config("DATABASE_URL")
 except UndefinedValueError:
     db_name = config("POSTGRES_DB")
     db_host = config("POSTGRES_HOST")
