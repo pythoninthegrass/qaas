@@ -2326,13 +2326,13 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "uvicorn"
-version = "0.26.0"
+version = "0.28.0"
 description = "The lightning-fast ASGI server."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "uvicorn-0.26.0-py3-none-any.whl", hash = "sha256:cdb58ef6b8188c6c174994b2b1ba2150a9a8ae7ea5fb2f1b856b94a815d6071d"},
-    {file = "uvicorn-0.26.0.tar.gz", hash = "sha256:48bfd350fce3c5c57af5fb4995fded8fb50da3b4feb543eb18ad7e0d54589602"},
+    {file = "uvicorn-0.28.0-py3-none-any.whl", hash = "sha256:6623abbbe6176204a4226e67607b4d52cc60ff62cda0ff177613645cefa2ece1"},
+    {file = "uvicorn-0.28.0.tar.gz", hash = "sha256:cab4473b5d1eaeb5a0f6375ac4bc85007ffc75c3cc1768816d9e5d589857b067"},
 ]
 
 [package.dependencies]
@@ -2475,4 +2475,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "6cabda210cf58b354a3ce3566056c8807e9cb959c5ecf9898d6056b83b4034ca"
+content-hash = "4fb9d70cceb496631af9e4369cd721a9eff10da99cc01d1df9af547ec5c999cd"
